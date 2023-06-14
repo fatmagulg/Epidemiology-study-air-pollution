@@ -4,7 +4,7 @@ Exposure to air pollution is believed impact health and reduce life expectancy. 
 the effect of air pollution exposure on health using a statistical model. The dataset contains information on all Intermediate Zones (IZ)
 of Scotland and numerous covariates.
   
-covariates:
+Covariates:  
 **IZ**:A unique code for each IZ  
 **name**: the name of the IZ  
 **YhospResp**: number of respiratory hospitalisations in the IZ in 2015-2016  
