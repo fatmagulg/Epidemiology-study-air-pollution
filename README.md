@@ -5,7 +5,7 @@ the effect of air pollution exposure on health using a statistical model. The da
 of Scotland and numerous covariates.
 
 covariates:
-**IZ**:A unique code for each IZ
+**IZ**:A unique code for each IZ /n
 **name**: the name of the IZ
 **YhospResp**: number of respiratory hospitalisations in the IZ in 2015-2016
 **EhospResp**: expected number of respiratory hospitaliations for the IZ based on population size and demographic structure
