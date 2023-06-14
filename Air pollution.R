@@ -14,7 +14,11 @@ dim(dat)
 
 
 ##### SMR #####
-# calculate SMR and add as a column to the dataframe
+# Standard Mortality Ratio (SMR) = Observed number of deaths / Expected number of deaths
+# The number of observed hospitalisations in an IZ depends on the number of people living in that zone
+# as well as population demographics (age, sex structure)
+# Therefoe we must calculate SMR to get a standardised 
+# Calculate SMR and add as a column to the data frame
 dat$SMR <- dat$YhospResp / dat$EhospResp
 
 
@@ -24,23 +28,41 @@ dat$SMR <- dat$YhospResp / dat$EhospResp
 # Produce correlation matrix of all variables that can be included in the model
 # Using log(SMR) bc Poisson regression with log link it being used
 M <- cor(cbind(log(dat$SMR), dat[, 5 :12]))
-
+M
 
 # Plot it
-install.packages("corrplot")
 library(corrplot)
-corrplot(M, method = 'shade', type = "full" 
+corrplot(M, method = 'circle', type = "full" 
          #,col = colorRampPalette(c("darkblue", "blue", "white", "pink", "red"))(10)
          )
-
+# Education, income, and employment appear highly correlated with each other.
+# Housing appears moderately correlated with education, income, and housing. 
+# This makes intuitive sense; we would expect people who are educated to have higher income and hence
+# afford better quality of housing. These all are essentially a measure of income so only include one
+# in the model to avoid complications related to multicollinearity
+# pm10 and no2 appear highly correlated. Again this is surely because they are both measures of air 
+# pollution so we can consider retaining only retain one
 
 
 
 ##### Fit model #####
-mod1 <- glm(YhospResp ~ offset(log(EhospResp)) + income + crime + access + no2, family = "poisson", data = dat)
+# We will use a Poisson regression model because our response is count type data
+# We include an offset term to allow for variations in population size between the different IZ's. The offset 
+# is on the log scale to match the log link we are using for the Poisson GLM
+
+# Model with both no2 and pm10
+mod1 <- glm(YhospResp ~ offset(log(EhospResp)) + income + crime + access + no2 + pm10, family = "poisson", data = dat)
 summary(mod1)
 
+# Model with only no2
+mod2 <- glm(YhospResp ~ offset(log(EhospResp)) + income + crime + access + no2, family = "poisson", data = dat)
+summary(mod2)
 
+library(broom)
+glance(mod1)
+glance(mod2)
+# Both no2 and pm10 appear significant in mod1. The AIC of mod1 (both pollutant variables) is lower
+# suggesting mod1 is better
 
 #Compute the relative change in risk for:
 #a one unit increase in no2;
